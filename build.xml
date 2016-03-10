@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="PluginLoader" default="all">
+	<property name="src" value="${basedir}/src" />
+	<property name="build" value="${basedir}/build" />
+	<property name="exec" value="${basedir}/exec" />
+
+	<target name="prepare">
+		<mkdir dir="${build}" />
+		<mkdir dir="${exec}" />
+		<mkdir dir="${exec}/Plugins" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${build}" />
+		<delete dir="${exec}" />
+	</target>
+
+	<target name="all" depends="make-all-jars" />
+
+	<target name="make-all-jars" depends="make-main-jar, make-plugin-jar, make-raid-jar" />
+
+	<target name="compile-main" depends="prepare">
+		
+		<javac destdir="${build}" srcdir="${src}/de/pjog/pluginLoader/" />
+		<javac destdir="${build}" srcdir="${src}/de/pjog/plugin/" />
+	</target>
+
+	<target name="make-main-jar" depends="compile-main">
+		<jar destfile="${exec}/main.jar" basedir="${build}" includes="de/**">
+			<manifest>
+				<attribute name="Main-Class" value="de.pjog.pluginLoader.Main" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="compile-plugin" depends="prepare">
+		<javac destdir="${build}" srcdir="${src}/myplugin/jog" />
+	</target>
+
+	<target name="make-plugin-jar" depends="compile-plugin">
+		<jar destfile="${exec}/Plugins/MyPlugin.jar" basedir="${build}" includes="myplugin/**" excludes="myplugin/jog/*.properties">
+			<zipfileset dir="${src}/myplugin/jog/" includes="*.properties"/>
+		</jar>
+	</target>
+	
+	<target name="compile-raid" depends="prepare">
+			<javac destdir="${build}" srcdir="${src}/sanholo/raid" />
+		</target>
+
+		<target name="make-raid-jar" depends="compile-raid">
+			<jar destfile="${exec}/Plugins/raid.jar" basedir="${build}" includes="sanholo/**" excludes="sanholo/raid/*.properties">
+				<zipfileset dir="${src}/sanholo/raid/" includes="*.properties"/>
+			</jar>
+		</target>
+</project>
